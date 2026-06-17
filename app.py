@@ -424,9 +424,12 @@ with col_controls:
 st.divider()
 COEFS = get_coeficientes_cached(ENV_KEY)
 
-# Vertex AI
+# 🛠️ PARCHE INTEGRAL: Inicialización limpia de Vertex AI para evitar 'connection refused'
 if "vertex_client" not in st.session_state:
-    st.session_state.vertex_client = ia_engine.conectar_vertex(None if ES_CLOUD_RUN else CREDS)
+    if "GEMINI_API_KEY" in st.secrets:
+        st.session_state.vertex_client = ia_engine.conectar_vertex(st.secrets["GEMINI_API_KEY"])
+    else:
+        st.session_state.vertex_client = ia_engine.conectar_vertex(None if ES_CLOUD_RUN else CREDS)
 
 # GPS
 loc = get_geolocation(component_key="gps_v1")
